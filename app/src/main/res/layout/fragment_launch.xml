@@ -9,10 +9,46 @@
         tools:context="com.example.android.politicalpreparedness.MainActivity">
 
         <!-- TODO: Add image for home screen logo. -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ballot_logo"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:src="@drawable/ballot_logo"
+            />
 
         <!-- TODO: Add Button to navigate to upcoming elections. -->
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/upcoming_button"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/representative_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/upcoming_elections"/>
+
 
         <!-- TODO: Add Button to navigate to representatives. -->
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/representative_button"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/find_my_representatives"/>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
