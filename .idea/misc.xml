@@ -3,11 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Kotlin Projects 2/nd940-cap-advanced-android-programming-project-starter-master/starter/app/src/main/res/drawable/abc.xml" value="0.123" />
         <entry key="..\:/Kotlin Projects 2/nd940-cap-advanced-android-programming-project-starter-master/starter/app/src/main/res/layout/activity_main.xml" value="0.20416666666666666" />
         <entry key="..\:/Kotlin Projects 2/nd940-cap-advanced-android-programming-project-starter-master/starter/app/src/main/res/layout/fragment_election.xml" value="0.20416666666666666" />
         <entry key="..\:/Kotlin Projects 2/nd940-cap-advanced-android-programming-project-starter-master/starter/app/src/main/res/layout/fragment_launch.xml" value="0.20416666666666666" />
         <entry key="..\:/Kotlin Projects 2/nd940-cap-advanced-android-programming-project-starter-master/starter/app/src/main/res/layout/fragment_representative.xml" value="0.20416666666666666" />
         <entry key="..\:/Kotlin Projects 2/nd940-cap-advanced-android-programming-project-starter-master/starter/app/src/main/res/layout/fragment_voter_info.xml" value="0.20416666666666666" />
+        <entry key="..\:/Kotlin Projects 2/nd940-cap-advanced-android-programming-project-starter-master/starter/app/src/main/res/layout/list_elections.xml" value="0.20416666666666666" />
+        <entry key="..\:/Kotlin Projects 2/nd940-cap-advanced-android-programming-project-starter-master/starter/app/src/main/res/layout/representative_viewholder.xml" value="0.20416666666666666" />
       </map>
     </option>
   </component>

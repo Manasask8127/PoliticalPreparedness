@@ -34,12 +34,25 @@ class RepresentativeViewHolder(val binding: ViewholderRepresentativeBinding): Re
         binding.representativePhoto.setImageResource(R.drawable.ic_profile)
 
         //TODO: Show social links ** Hint: Use provided helper methods
+        item.official.channels?.let {
+            showSocialLinks(it)
+        }
         //TODO: Show www link ** Hint: Use provided helper methods
+        item.official.urls?.let {
+            showWWWLinks(it)
+        }
 
         binding.executePendingBindings()
     }
 
     //TODO: Add companion object to inflate ViewHolder (from)
+    companion object{
+        fun from(parent: ViewGroup):RepresentativeViewHolder{
+            val layoutInflater=LayoutInflater.from(parent.context)
+            val binding=ViewholderRepresentativeBinding.inflate(layoutInflater,parent,false)
+            return RepresentativeViewHolder(binding)
+        }
+    }
 
     private fun showSocialLinks(channels: List<Channel>) {
         val facebookUrl = getFacebookUrl(channels)
@@ -79,5 +92,15 @@ class RepresentativeViewHolder(val binding: ViewholderRepresentativeBinding): Re
 }
 
 //TODO: Create RepresentativeDiffCallback
+class RepresentativeDiffCallback:DiffUtil.ItemCallback<Representative>(){
+    override fun areItemsTheSame(oldItem: Representative, newItem: Representative): Boolean {
+        return oldItem.office.name==newItem.office.name && oldItem.official.name== newItem.official.name
+    }
+
+    override fun areContentsTheSame(oldItem: Representative, newItem: Representative): Boolean {
+        return oldItem==newItem
+    }
+
+}
 
 //TODO: Create RepresentativeListener
