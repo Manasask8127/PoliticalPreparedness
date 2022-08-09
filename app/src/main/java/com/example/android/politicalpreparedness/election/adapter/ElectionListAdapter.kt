@@ -22,12 +22,13 @@ class ElectionListAdapter(private val clickListener: ElectionListener):
     }
 
     //TODO: Create ElectionListener
-    class ElectionListener(val clickListener: (electionId: Int) -> Unit) {
-        fun click(election: Election) = clickListener(election.id)
+    class ElectionListener(val clickListener: (election: Election) -> Unit) {
+        fun click(election: Election) = clickListener(election)
 
     }
 
-    class ElectionViewHolder(val binding: ElectionListBinding) :
+    //TODO: Create ElectionViewHolder
+    class ElectionViewHolder private constructor(val binding: ElectionListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(clickListener: ElectionListener, item: Election) {
@@ -50,7 +51,7 @@ class ElectionListAdapter(private val clickListener: ElectionListener):
 
 }
 
-//TODO: Create ElectionViewHolder
+
 
 //TODO: Create ElectionDiffCallback
 class ElectionDiffCallback:DiffUtil.ItemCallback<Election>(){
