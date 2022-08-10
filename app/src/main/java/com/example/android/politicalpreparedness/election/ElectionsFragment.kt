@@ -5,10 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
+import com.example.android.politicalpreparedness.R
 import com.example.android.politicalpreparedness.databinding.FragmentElectionBinding
 import com.example.android.politicalpreparedness.election.adapter.ElectionListAdapter
 import com.example.android.politicalpreparedness.network.models.Division
@@ -27,31 +29,34 @@ class ElectionsFragment: Fragment() {
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
+
+        //TODO: Add binding values
+        binding= DataBindingUtil.inflate(inflater, R.layout.fragment_election,container,false)
+
         //TODO: Add ViewModel values and create ViewModel
         val electionsViewModelFactory=ElectionsViewModelFactory()
         viewModel=ViewModelProvider(this,electionsViewModelFactory).get(ElectionsViewModel::class.java)
-        //TODO: Add binding values
-        binding=FragmentElectionBinding.inflate(inflater)
 
         binding.viewModel=viewModel
 
         binding.lifecycleOwner=this
 
         //TODO: Create ElectionViewHolder
-        viewModel.navigateToVoterInfo.observe(requireActivity()) { election ->
+        viewModel.navigateToVoterInfo.observe(requireActivity(), { election ->
             election?.let {
                 findNavController().navigate(
                     ElectionsFragmentDirections.actionElectionsFragmentToVoterInfoFragment(
-                        election.id, election.division
+                        election
                     )
                 )
                 viewModel.doneNavigatingToVoterInfo()
             }
-        }
+        })
 
 
         //TODO: Initiate recycler adapters
-        val upcomingElectionsListAdapter=ElectionListAdapter(ElectionListAdapter.ElectionListener{election ->
+        val upcomingElectionsListAdapter=
+            ElectionListAdapter(ElectionListAdapter.ElectionListener{election ->
             viewModel.startNavigatingToVoterInfo(election)
         })
 
