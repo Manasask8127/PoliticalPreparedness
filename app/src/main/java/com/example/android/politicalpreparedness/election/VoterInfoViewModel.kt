@@ -1,29 +1,30 @@
 package com.example.android.politicalpreparedness.election
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.android.politicalpreparedness.Repository
+import com.example.android.politicalpreparedness.database.ElectionAndAdministrationBody
 import com.example.android.politicalpreparedness.database.ElectionDao
-import com.example.android.politicalpreparedness.network.models.AdministrationBody
-import com.example.android.politicalpreparedness.network.models.Election
-import com.example.android.politicalpreparedness.network.models.State
+import com.example.android.politicalpreparedness.network.models.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class VoterInfoViewModel(private val election: Election) : ViewModel() {
+class VoterInfoViewModel(applicationContext: Context) : ViewModel() {
 
-    private val repository=Repository()
+    private val repository=Repository(applicationContext)
 
-    //TODO: Add live data to hold voter info
-    private val _voterInfoState=MutableLiveData<State>()
-    val voterInfoState:LiveData<State>
-    get() = _voterInfoState
+//    //TODO: Add live data to hold voter info
+    private val _followElectionButtonText=MutableLiveData<String>()
+    val followElectionButtonText:LiveData<String>
+    get() = _followElectionButtonText
 
     //TODO: Add var and methods to populate voter info
-    private val _electionSelected=MutableLiveData<Election>()
-    val electionSelected:LiveData<Election>
-    get() = _electionSelected
+    private val _election=MutableLiveData<Election>()
+    val election:LiveData<Election>
+    get() = _election
 
     //TODO: Add var and methods to support loading URLs
     private val _administrationBody=MutableLiveData<AdministrationBody>()
@@ -37,22 +38,64 @@ class VoterInfoViewModel(private val election: Election) : ViewModel() {
      * Hint: The saved state can be accomplished in multiple ways. It is directly related to how elections are saved/removed from the database.
      */
 
-    private fun getVoterInfo(address:String,electionId:Int){
+    private fun getElectionInfoFromNetwork(address:String,electionId:Int){
         viewModelScope.launch {
-            _administrationBody.value=repository.getVoterInfo(address,electionId)?.electionAdministrationBody
+            val voterInfoResponse: VoterInfoResponse? = repository.getElectionInfo(address, electionId)
+            if (voterInfoResponse != null) {
+                _election.value = voterInfoResponse.election
+                _administrationBody.value =
+                    voterInfoResponse.state?.first()?.electionAdministrationBody
+            }
         }
     }
 
-    private fun getAddress():String{
-        if(election.division.state.isNotEmpty()){
-            return "${election.division.country},${election.division.state}"
+    private fun getElectionInfoFromDB(electionId:Int){
+        viewModelScope.launch {
+            val electionAndAdministrationBody:ElectionAndAdministrationBody=repository.getElectionAndAdministrationBody(electionId)!!
+            _election.value=electionAndAdministrationBody.election
+            _administrationBody.value=electionAndAdministrationBody.administrationBody
+        }
+    }
+
+    fun followOrUnfollowElection(electionId: Int){
+        viewModelScope.launch {
+            val electionFromDB=repository.getElectionFromDB(electionId)
+            if(electionFromDB==electionId){
+                repository.deleteElectionandAdministrationBody(_election.value!!,_administrationBody.value!!)
+            }
+            else{
+                repository.insertElectionAndAdministrationBody(election.value!!,_administrationBody.value!!)
+            }
+            updateFollowButtonText(electionId)
+        }
+    }
+
+    fun getAddress(division: Division):String{
+        if(division.state.isNotEmpty()){
+            return "${division.country},${division.state}"
         }
         return "America"
     }
 
-    init {
-        _electionSelected.value=election
-        getVoterInfo(getAddress(),election.id)
+    fun loadElectionInfo(address:String,electionId:Int,loadFromDB:Boolean){
+        if(loadFromDB){
+            getElectionInfoFromDB(electionId)
+        }
+        else{
+            getElectionInfoFromNetwork(address,electionId)
+        }
+        updateFollowButtonText(electionId)
     }
 
+    private fun updateFollowButtonText(electionId: Int){
+        viewModelScope.launch {
+            val electionFromDB=repository.getElectionFromDB(electionId)
+            if(electionFromDB==electionId){
+                _followElectionButtonText.value="Unfollow"
+            }
+            else{
+                _followElectionButtonText.value="Follow"
+            }
+        }
+    }
 }

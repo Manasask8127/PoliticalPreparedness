@@ -29,13 +29,17 @@ class VoterInfoFragment : Fragment() {
         binding=FragmentVoterInfoBinding.inflate(inflater)
 
         //TODO: Add ViewModel values and create ViewModel
-        val voterInfoViewModelFactory=VoterInfoViewModelFactory(args.election)
+        val voterInfoViewModelFactory=VoterInfoViewModelFactory(requireActivity().applicationContext)
         viewModel=ViewModelProvider(requireActivity(),voterInfoViewModelFactory).get(VoterInfoViewModel::class.java)
 
 
         binding.viewModel=viewModel
 
-        viewModel.electionSelected.observe(requireActivity(),{
+        val address=viewModel.getAddress(args.argDivision)
+
+        viewModel.loadElectionInfo(address,args.argElectionID,args.argLoadFromDB)
+
+        viewModel.election.observe(requireActivity(),{
             binding.election=it
         })
 
@@ -61,12 +65,19 @@ class VoterInfoFragment : Fragment() {
 
         //TODO: Handle save button UI state
         //TODO: cont'd Handle save button clicks
+        viewModel.followElectionButtonText.observe(requireActivity(),{
+            binding.followElectionButton.text=it
+        })
+
+        binding.followElectionButton.setOnClickListener{
+            viewModel.followOrUnfollowElection(args.argElectionID)
+        }
 
         return binding.root
     }
 
     //TODO: Create method to load URL intents
-    fun loadElectionInfoUrl(url:String?){
+    private fun loadElectionInfoUrl(url:String?){
         Intent(Intent.ACTION_VIEW).run {
             data= Uri.parse(url)
             startActivity(this)

@@ -34,7 +34,7 @@ class ElectionsFragment: Fragment() {
         binding= DataBindingUtil.inflate(inflater, R.layout.fragment_election,container,false)
 
         //TODO: Add ViewModel values and create ViewModel
-        val electionsViewModelFactory=ElectionsViewModelFactory()
+        val electionsViewModelFactory=ElectionsViewModelFactory(requireActivity().applicationContext)
         viewModel=ViewModelProvider(this,electionsViewModelFactory).get(ElectionsViewModel::class.java)
 
         binding.viewModel=viewModel
@@ -42,35 +42,44 @@ class ElectionsFragment: Fragment() {
         binding.lifecycleOwner=this
 
         //TODO: Create ElectionViewHolder
-        viewModel.navigateToVoterInfo.observe(requireActivity(), { election ->
-            election?.let {
+        val upcomingElectionListAdapter=ElectionListAdapter(ElectionListAdapter.ElectionListener{
+            election ->
                 findNavController().navigate(
                     ElectionsFragmentDirections.actionElectionsFragmentToVoterInfoFragment(
-                        election
+                        election.id,election.division,false
                     )
                 )
-                viewModel.doneNavigatingToVoterInfo()
-            }
+        })
+
+        binding.upcomingElections.adapter=upcomingElectionListAdapter
+
+        viewModel.upcomingElections.observe(requireActivity(),{
+            electionList-> upcomingElectionListAdapter.submitList(electionList)
         })
 
 
         //TODO: Initiate recycler adapters
-        val upcomingElectionsListAdapter=
+        val savedElectionListAdapter=
             ElectionListAdapter(ElectionListAdapter.ElectionListener{election ->
-            viewModel.startNavigatingToVoterInfo(election)
+            //viewModel.startNavigatingToVoterInfo(election)
+                findNavController().navigate(
+                    ElectionsFragmentDirections.actionElectionsFragmentToVoterInfoFragment(
+                        election.id,election.division,true
+                    )
+                )
         })
 
         //TODO: Populate recycler adapters
-        binding.upcomingElections.adapter=upcomingElectionsListAdapter
+        binding.savedElections.adapter=savedElectionListAdapter
 //        val division=Division("ocd-division/country:us","USA","la")
 //        val date= Date(2025,7,6)
 //        val electionList= listOf<Election>(Election(2000,"test election",date,division))
 
-        viewModel.upcomingElections.observe(requireActivity()) { electionList ->
-            upcomingElectionsListAdapter.submitList(electionList)
+        viewModel.savedElections.observe(requireActivity()) { electionList ->
+            savedElectionListAdapter.submitList(electionList)
         }
 
-
+        viewModel.loadElections()
         return binding.root
     }
 

@@ -101,6 +101,15 @@
             tools:text="California,USA"/>
 
         <!-- TODO: Add button to save election to Room -->
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/follow_election_button"
+            tools:text="Follow"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_margin="16dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
