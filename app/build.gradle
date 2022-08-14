@@ -70,7 +70,16 @@ dependencies {
     // Glide
     //TODO: Add Glide Implementation
     implementation "com.github.bumptech.glide:glide:$version_glide"
-    annotationProcessor "com.github.bumptech.glide:compiler:$version_glide"
+    kapt "com.github.bumptech.glide:compiler:$version_glide"
+
+//    implementation ("com.github.bumptech.glide:glide:4.9.0") {
+//        exclude group: "com.android.support"
+//    }
+//    annotationProcessor 'androidx.annotation:annotation:1.0.0'
+//    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+//    implementation ("com.github.bumptech.glide:glide:4.9.0@aar") {
+//        transitive = true
+//    }
 
     //Room
     implementation "androidx.room:room-runtime:$version_room"

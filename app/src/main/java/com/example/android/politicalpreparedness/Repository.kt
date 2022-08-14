@@ -4,10 +4,7 @@ import android.content.Context
 import com.example.android.politicalpreparedness.database.ElectionAndAdministrationBody
 import com.example.android.politicalpreparedness.database.ElectionDatabase
 import com.example.android.politicalpreparedness.network.CivicsApi
-import com.example.android.politicalpreparedness.network.models.AdministrationBody
-import com.example.android.politicalpreparedness.network.models.Election
-import com.example.android.politicalpreparedness.network.models.State
-import com.example.android.politicalpreparedness.network.models.VoterInfoResponse
+import com.example.android.politicalpreparedness.network.models.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.properties.Delegates
@@ -18,7 +15,7 @@ class Repository(context: Context) {
 
     private lateinit var upcomingElection:List<Election>
     private lateinit var savedElection:List<Election>
-    private lateinit var state:State
+    private lateinit var representativeResponse: RepresentativeResponse
     private lateinit var voterInfoResponse: VoterInfoResponse
     private var returnedElectionId by Delegates.notNull<Int>()
     private lateinit var electionAndAdministrationBody: ElectionAndAdministrationBody
@@ -32,12 +29,12 @@ class Repository(context: Context) {
         return upcomingElection
     }
 
-//    suspend fun getVoterInfo(address:String,electionId:Int):State{
-//        withContext(Dispatchers.IO){
-//            state= CivicsApi.retrofitService.getVoterInfo(address,electionId).state?.first()!!
-//        }
-//        return state
-//    }
+    suspend fun getRepresentativeInfoByAddress(address:String):RepresentativeResponse{
+        withContext(Dispatchers.IO){
+            representativeResponse= CivicsApi.retrofitService.getRepresentativeInfoByAddress(address)
+        }
+        return representativeResponse
+    }
 
     suspend fun getSavedElectionsList():List<Election>{
         withContext(Dispatchers.IO){

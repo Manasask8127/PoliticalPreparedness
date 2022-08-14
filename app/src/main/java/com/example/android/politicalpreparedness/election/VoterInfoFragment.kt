@@ -16,7 +16,7 @@ class VoterInfoFragment : Fragment() {
     private lateinit var binding: FragmentVoterInfoBinding
 
     //viewmodel declaration
-    private lateinit var viewModel:VoterInfoViewModel
+    private lateinit var voterInfoViewModel:VoterInfoViewModel
 
     //argumets
     private val args:VoterInfoFragmentArgs by navArgs()
@@ -30,20 +30,23 @@ class VoterInfoFragment : Fragment() {
 
         //TODO: Add ViewModel values and create ViewModel
         val voterInfoViewModelFactory=VoterInfoViewModelFactory(requireActivity().applicationContext)
-        viewModel=ViewModelProvider(requireActivity(),voterInfoViewModelFactory).get(VoterInfoViewModel::class.java)
+        voterInfoViewModel=ViewModelProvider(requireActivity(),voterInfoViewModelFactory).get(VoterInfoViewModel::class.java)
 
 
-        binding.viewModel=viewModel
+        binding.apply {
+            lifecycleOwner=this@VoterInfoFragment
+            viewModel = voterInfoViewModel
+        }
 
-        val address=viewModel.getAddress(args.argDivision)
+        val address=voterInfoViewModel.getAddress(args.argDivision)
 
-        viewModel.loadElectionInfo(address,args.argElectionID,args.argLoadFromDB)
+        voterInfoViewModel.loadElectionInfo(address,args.argElectionID,args.argLoadFromDB)
 
-        viewModel.election.observe(requireActivity(),{
+        voterInfoViewModel.election.observe(requireActivity(),{
             binding.election=it
         })
 
-        viewModel.administrationBody.observe(requireActivity(),{
+        voterInfoViewModel.administrationBody.observe(viewLifecycleOwner,{
             binding.administrationBody=it
         })
         //TODO: Populate voter info -- hide views without provided data.
@@ -54,23 +57,23 @@ class VoterInfoFragment : Fragment() {
 
         //TODO: Handle loading of URLs
         binding.stateBallot.setOnClickListener {
-            val adminBody=viewModel.administrationBody.value
+            val adminBody=voterInfoViewModel.administrationBody.value
             loadElectionInfoUrl(adminBody?.ballotInfoUrl)
         }
 
         binding.stateLocations.setOnClickListener {
-            val adminBody=viewModel.administrationBody.value
+            val adminBody=voterInfoViewModel.administrationBody.value
             loadElectionInfoUrl(adminBody?.electionInfoUrl)
         }
 
         //TODO: Handle save button UI state
         //TODO: cont'd Handle save button clicks
-        viewModel.followElectionButtonText.observe(requireActivity(),{
+        voterInfoViewModel.followElectionButtonText.observe(viewLifecycleOwner,{
             binding.followElectionButton.text=it
         })
 
         binding.followElectionButton.setOnClickListener{
-            viewModel.followOrUnfollowElection(args.argElectionID)
+            voterInfoViewModel.followOrUnfollowElection(args.argElectionID)
         }
 
         return binding.root
