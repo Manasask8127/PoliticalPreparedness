@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.android.politicalpreparedness.Repository
+import com.example.android.politicalpreparedness.network.models.Address
 import com.example.android.politicalpreparedness.representative.model.Representative
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -14,21 +15,35 @@ class RepresentativeViewModel(applicationContext: Context): ViewModel() {
 
     private val repository=Repository(applicationContext)
 
+    private var _networkException=MutableLiveData<String>()
+    val networkException:LiveData<String>
+    get() = _networkException
+
     //TODO: Establish live data for representatives and address
     private var _representatives=MutableLiveData<List<Representative>>()
     val representatives:LiveData<List<Representative>>
     get() = _representatives
 
+    val addressLine1=MutableLiveData<String>()
+    val addressLine2=MutableLiveData<String>()
+    val city=MutableLiveData<String>()
+    val state=MutableLiveData<String>()
+    val zip=MutableLiveData<String>()
+
 
 
     //TODO: Create function to fetch representatives from API from a provided address
     fun getRepresentatives(address:String){
+        try {
         viewModelScope.launch {
             val (offices,officials)=repository.getRepresentativeInfoByAddress(address)
             _representatives.value=offices.flatMap {
                 it.getRepresentatives(officials)
+            }
 
             }
+        }catch (ex:Exception){
+            _networkException.postValue(ex.message)
         }
         Timber.d("repres ${_representatives.value}")
     }
@@ -47,5 +62,12 @@ class RepresentativeViewModel(applicationContext: Context): ViewModel() {
     //TODO: Create function get address from geo location
 
     //TODO: Create function to get address from individual fields
+    fun setAddress(address: Address){
+        addressLine1.value=address.line1
+        addressLine2.value=address.line2
+        city.value=address.city
+        state.value=address.state
+        zip.value=address.zip
+    }
 
 }

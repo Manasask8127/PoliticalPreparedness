@@ -11,14 +11,14 @@ import androidx.lifecycle.MutableLiveData
 import java.lang.reflect.Constructor
 
 class ElectionsNetworkManager(context: Context){
-    val connectivityManager=context.getSystemService(ConnectivityManager::class.java)
+    private val connectivityManager:ConnectivityManager=context.getSystemService(ConnectivityManager::class.java)
 
-    private var _connectedToNetwork=MutableLiveData<Boolean>()
+    private var _connectedToNetwork=MutableLiveData<Boolean>(false)
     val connectedToNetwork:LiveData<Boolean>
     get() = _connectedToNetwork
 
     private val networkRequest=NetworkRequest.Builder()
-        .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        .addCapability(NET_CAPABILITY_INTERNET)
         .addCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
         .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
         .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
@@ -36,6 +36,9 @@ class ElectionsNetworkManager(context: Context){
         override fun onLost(network: Network) {
             _connectedToNetwork.postValue(false)
         }
+
+        override fun onUnavailable() {
+            _connectedToNetwork.postValue(false)        }
     }
 
     init {
