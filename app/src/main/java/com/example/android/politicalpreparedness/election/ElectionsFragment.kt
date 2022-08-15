@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.android.politicalpreparedness.R
 import com.example.android.politicalpreparedness.databinding.FragmentElectionBinding
 import com.example.android.politicalpreparedness.election.adapter.ElectionListAdapter
+import com.example.android.politicalpreparedness.network.ElectionsNetworkManager
 import com.example.android.politicalpreparedness.network.models.Division
 import com.example.android.politicalpreparedness.network.models.Election
 import java.util.*
@@ -56,7 +57,7 @@ class ElectionsFragment: Fragment() {
 
             binding.upcomingElections.adapter=upcomingElectionListAdapter
 
-            electionViewModel.upcomingElections.observe(requireActivity(),{
+            electionViewModel.upcomingElections.observe(viewLifecycleOwner,{
                     electionList-> upcomingElectionListAdapter.submitList(electionList)
             })
 
@@ -78,15 +79,47 @@ class ElectionsFragment: Fragment() {
 //        val date= Date(2025,7,6)
 //        val electionList= listOf<Election>(Election(2000,"test election",date,division))
 
-            electionViewModel.savedElections.observe(requireActivity()) { electionList ->
+            electionViewModel.savedElections.observe(viewLifecycleOwner, { electionList ->
                 savedElectionListAdapter.submitList(electionList)
-            }
+            })
 
-            electionViewModel.loadElections()
+            //electionViewModel.loadElections()
+        refreshElections()
+
+        binding.refreshUpcomingElections.setOnRefreshListener {
+            refreshElections()
+        }
             return binding.root
         }
 
 
     //TODO: Refresh adapters when fragment loads
+    private fun refreshElections(){
+        val networkManager= ElectionsNetworkManager.getInstance(requireActivity().applicationContext)
+        networkManager.connectedToNetwork.observe(viewLifecycleOwner,{isNetWorkAvailable ->
+            if(isNetWorkAvailable){
+                showUpcomingElections()
+            }
+            else{
+                showNotConnectedToNetwork()
+            }
+        })
+        electionViewModel.getSavedElections()
+    }
+
+    private fun showNotConnectedToNetwork() {
+        binding.upcomingElections.visibility=View.GONE
+        binding.error.visibility=View.VISIBLE
+        binding.error.setImageResource(R.drawable.ic_no_network)
+        binding.refreshUpcomingElections.isRefreshing=false
+    }
+
+    private fun showUpcomingElections(){
+        binding.error.visibility=View.GONE
+        binding.upcomingElections.visibility=View.VISIBLE
+        electionViewModel.refreshElections()
+        binding.refreshUpcomingElections.isRefreshing=false
+    }
+
 
 }

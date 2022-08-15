@@ -16,7 +16,7 @@
 
 <com.google.android.material.card.MaterialCardView
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="60dp"
     app:cardCornerRadius="8dp"
     android:elevation="5dp"
     android:onClick="@{() -> clickListener.click(election)}">

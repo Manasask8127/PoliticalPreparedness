@@ -20,27 +20,45 @@
             android:layout_height="wrap_content"
             android:id="@+id/upcoming_elections_text"
             android:text="Upcoming Elections"
+            android:layout_margin="8dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
         <!-- TODO: Add Upcoming Election Recycler and Header -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/refresh_upcoming_elections"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/upcoming_elections_text"
+            app:layout_constraintBottom_toTopOf="@+id/barrier">
+
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:id="@+id/upcoming_elections"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/upcoming_elections_text"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
-
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:id="@+id/error"
+            android:visibility="gone"
+            android:contentDescription="Network error"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/upcoming_elections_text"
+            app:layout_constraintBottom_toTopOf="@id/barrier"
+            tools:srcCompat="@drawable/ic_refresh"/>
         <!-- TODO: Add Saved Election Recycler and Header -->
-        <androidx.constraintlayout.widget.Barrier
+        <androidx.constraintlayout.widget.Guideline
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/barrier"
-            app:barrierDirection="bottom"
-            app:constraint_referenced_ids="upcoming_elections"/>
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5"/>
 
         <TextView
             android:layout_width="match_parent"
