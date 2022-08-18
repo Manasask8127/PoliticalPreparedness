@@ -12,9 +12,9 @@ import com.example.android.politicalpreparedness.network.models.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class VoterInfoViewModel(applicationContext: Context) : ViewModel() {
+class VoterInfoViewModel(private val repository:Repository) : ViewModel() {
 
-    private val repository=Repository(applicationContext)
+    //private val repository=Repository(applicationContext)
 
 //    //TODO: Add live data to hold voter info
     private val _followElectionButtonText=MutableLiveData<String>()

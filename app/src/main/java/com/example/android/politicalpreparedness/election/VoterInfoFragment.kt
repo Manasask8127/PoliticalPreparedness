@@ -8,6 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.navArgs
+import com.example.android.politicalpreparedness.PoliticalPreparednessApplication
+import com.example.android.politicalpreparedness.Repository
+import com.example.android.politicalpreparedness.database.ElectionDatabase
 import com.example.android.politicalpreparedness.databinding.FragmentVoterInfoBinding
 
 class VoterInfoFragment : Fragment() {
@@ -28,9 +31,11 @@ class VoterInfoFragment : Fragment() {
         //TODO: Add binding values
         binding=FragmentVoterInfoBinding.inflate(inflater)
 
+        val repoAppRepoContainer=(requireActivity().application as PoliticalPreparednessApplication).appRepoContainer
+
         //TODO: Add ViewModel values and create ViewModel
-        val voterInfoViewModelFactory=VoterInfoViewModelFactory(requireActivity().applicationContext)
-        voterInfoViewModel=ViewModelProvider(requireActivity(),voterInfoViewModelFactory).get(VoterInfoViewModel::class.java)
+        val voterInfoViewModelFactory=VoterInfoViewModelFactory(repoAppRepoContainer.repository)
+        voterInfoViewModel=ViewModelProvider(this,voterInfoViewModelFactory).get(VoterInfoViewModel::class.java)
 
 
         binding.apply {
@@ -42,13 +47,13 @@ class VoterInfoFragment : Fragment() {
 
         voterInfoViewModel.loadElectionInfo(address,args.argElectionID,args.argLoadFromDB)
 
-        voterInfoViewModel.election.observe(requireActivity(),{
-            binding.election=it
-        })
+        voterInfoViewModel.election.observe(requireActivity()) {
+            binding.election = it
+        }
 
-        voterInfoViewModel.administrationBody.observe(viewLifecycleOwner,{
-            binding.administrationBody=it
-        })
+        voterInfoViewModel.administrationBody.observe(viewLifecycleOwner) {
+            binding.administrationBody = it
+        }
         //TODO: Populate voter info -- hide views without provided data.
         /**
         Hint: You will need to ensure proper data is provided from previous fragment.
@@ -68,9 +73,9 @@ class VoterInfoFragment : Fragment() {
 
         //TODO: Handle save button UI state
         //TODO: cont'd Handle save button clicks
-        voterInfoViewModel.followElectionButtonText.observe(viewLifecycleOwner,{
-            binding.followElectionButton.text=it
-        })
+        voterInfoViewModel.followElectionButtonText.observe(viewLifecycleOwner) {
+            binding.followElectionButton.text = it
+        }
 
         binding.followElectionButton.setOnClickListener{
             voterInfoViewModel.followOrUnfollowElection(args.argElectionID)

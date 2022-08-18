@@ -1,19 +1,25 @@
 package com.example.android.politicalpreparedness.representative
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.android.politicalpreparedness.Repository
 import com.example.android.politicalpreparedness.network.models.Address
 import com.example.android.politicalpreparedness.representative.model.Representative
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class RepresentativeViewModel(applicationContext: Context): ViewModel() {
+class RepresentativeViewModel(private val repository:Repository,
+                              private val savedStateHandle: SavedStateHandle):
+    ViewModel() {
 
-    private val repository=Repository(applicationContext)
+    private val line1="line1"
+    private val line2="line2"
+    private val city="city"
+    private val state="state"
+    private val zip="zip"
+    private val showList="list"
+
+    //private val repository=Repository(applicationContext)
 
     private var _networkException=MutableLiveData<String>()
     val networkException:LiveData<String>
@@ -24,28 +30,85 @@ class RepresentativeViewModel(applicationContext: Context): ViewModel() {
     val representatives:LiveData<List<Representative>>
     get() = _representatives
 
-    val addressLine1=MutableLiveData<String>()
-    val addressLine2=MutableLiveData<String>()
-    val city=MutableLiveData<String>()
-    val state=MutableLiveData<String>()
-    val zip=MutableLiveData<String>()
+
+    var addressLine1=MutableLiveData<String>()
+    set(value) {
+        field=value
+        savedStateHandle.set(line1,value.value)
+    }
+
+    var addressLine2=MutableLiveData<String>()
+        set(value) {
+            field=value
+            savedStateHandle.set(line2,value.value)
+        }
+
+    var addressCity=MutableLiveData<String>()
+        set(value) {
+            field=value
+            savedStateHandle.set(city,value.value)
+        }
+
+    var addressState=MutableLiveData<String>()
+        set(value) {
+            field=value
+            savedStateHandle.set(state,value.value)
+        }
+
+    var addressZip=MutableLiveData<String>()
+        set(value) {
+            field=value
+            savedStateHandle.set(zip,value.value)
+        }
+
+    var _isListShowing=MutableLiveData<Boolean>()
+        set(value) {
+            field=value
+            savedStateHandle.set(showList,value.value)
+        }
+
+//    private var _motionTransition=MutableLiveData<Int>()
+//        set(value){
+//            field=value
+//            savedStateHandle.set("motion",value.value)
+//        }
+//    val motionTransition:LiveData<Int>
+//        get() = _motionTransition
+
+    init {
+        restoreAddress()
+        val address:String?=getAddress()
+        if(address!=null){
+            getRepresentatives(address)
+        }
+    }
+
+    private fun restoreAddress() {
+        addressLine1=savedStateHandle.getLiveData(line1)
+        addressLine2=savedStateHandle.getLiveData(line2)
+        addressCity=savedStateHandle.getLiveData(city)
+        addressState=savedStateHandle.getLiveData(state)
+        addressZip=savedStateHandle.getLiveData(zip)
+        _isListShowing=savedStateHandle.getLiveData(showList)
+       // _motionTransition=savedStateHandle.getLiveData("motion")
+    }
 
 
 
     //TODO: Create function to fetch representatives from API from a provided address
-    fun getRepresentatives(address:String){
-        try {
+    fun getRepresentatives(address:String) {
         viewModelScope.launch {
-            val (offices,officials)=repository.getRepresentativeInfoByAddress(address)
-            _representatives.value=offices.flatMap {
-                it.getRepresentatives(officials)
-            }
+            try {
+                val (offices, officials) = repository.getRepresentativeInfoByAddress(address)
+                _representatives.value = offices.flatMap {
+                    it.getRepresentatives(officials)
+                }
 
+            } catch (ex: Exception) {
+                _networkException.postValue(ex.message)
             }
-        }catch (ex:Exception){
-            _networkException.postValue(ex.message)
+            Timber.d("repres ${_representatives.value}")
         }
-        Timber.d("repres ${_representatives.value}")
     }
 
     /**
@@ -62,12 +125,39 @@ class RepresentativeViewModel(applicationContext: Context): ViewModel() {
     //TODO: Create function get address from geo location
 
     //TODO: Create function to get address from individual fields
+    fun getAddress():String?{
+        if (ValidateAddress()){
+            return Address(
+                addressLine1.value!!,
+                addressLine2.value!!,
+                addressCity.value!!,
+                addressState.value!!,
+                addressZip.value!!).toFormattedString()
+        }
+        return null
+    }
+
+    private fun ValidateAddress(): Boolean {
+        return (addressLine1.value?.isNotBlank()==true && addressCity.value?.isNotBlank()==true
+                && addressState.value?.isNotBlank()==true && addressZip.value?.isNotBlank()==true
+                && _isListShowing.value==true)
+
+    }
+
     fun setAddress(address: Address){
         addressLine1.value=address.line1
         addressLine2.value=address.line2
-        city.value=address.city
-        state.value=address.state
-        zip.value=address.zip
+        addressCity.postValue(address.city)
+        addressState.postValue(address.state)
+        addressZip.postValue(address.zip)
     }
+
+    fun setListShowing(boolean: Boolean){
+        _isListShowing.postValue(boolean)
+    }
+
+//    fun setMotionTransitionID(id:Int){
+//        _motionTransition.postValue(id)
+//    }
 
 }

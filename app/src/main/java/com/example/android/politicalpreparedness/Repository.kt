@@ -9,9 +9,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.properties.Delegates
 
-class Repository(context: Context) {
+class Repository(private val database: ElectionDatabase) {
 
-    private val database=ElectionDatabase.getInstance(context)
+    //private val database=ElectionDatabase.getInstance(context)
 
     private lateinit var upcomingElection:List<Election>
     private lateinit var savedElection:List<Election>

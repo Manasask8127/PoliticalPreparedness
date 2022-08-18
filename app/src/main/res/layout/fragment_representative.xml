@@ -32,7 +32,9 @@
                 android:layout_height="wrap_content"
                 android:text="@string/representative_search"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="16dp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"/>
 
             <!-- TODO: Add data binding value -->
             <!-- TODO: Add visual styling and content -->
@@ -40,27 +42,31 @@
                 android:id="@+id/address_line_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints=""
                 android:hint="@string/address_line_1"
                 android:inputType="textPostalAddress"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
                 android:text="@{viewModel.addressLine1}"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/search_title"
-                motion:ignore="TouchTargetSizeCheck" />
+                app:layout_constraintTop_toBottomOf="@id/search_title" />
 
             <!-- TODO: Add data binding value -->
             <!-- TODO: Add visual styling and content -->
             <EditText
                 android:id="@+id/address_line_2"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:autofillHints=""
                 android:hint="@string/address_line_2"
                 android:inputType="textPostalAddress"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
                 android:text="@{viewModel.addressLine2}"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/address_line_1"
-                motion:ignore="TouchTargetSizeCheck" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/address_line_1" />
 
             <!-- TODO: Add data binding value -->
             <!-- TODO: Add visual styling and content -->
@@ -71,7 +77,9 @@
                 android:autofillHints=""
                 android:hint="@string/city"
                 android:inputType="textPostalAddress"
-                android:text="@{viewModel.city}"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@{viewModel.addressCity}"
                 app:layout_constraintEnd_toStartOf="@id/state"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/address_line_2"
@@ -80,19 +88,19 @@
             <!-- TODO: Add default values from provided resources  -->
             <!-- TODO: Add data binding value -->
             <!-- TODO: Add visual styling and content -->
-            <Spinner
-                android:id="@+id/state"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:autofillHints=""
-                android:entries="@array/states"
-                android:inputType="textPostalAddress"
-                app:layout_constraintBottom_toBottomOf="@id/city"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/city"
-                app:layout_constraintTop_toTopOf="@id/city"
-                app:stateValue="@{viewModel.state}"
-                motion:ignore="TouchTargetSizeCheck" />
+        <Spinner
+            android:id="@+id/state"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:entries="@array/states"
+            android:inputType="textPostalAddress"
+            android:maxLength="5"
+            app:layout_constraintEnd_toEndOf="@id/city"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/city"
+            app:stateValue="@{viewModel.addressState}" />
 
             <!-- TODO: Add data binding value -->
             <!-- TODO: Add visual styling and content -->
@@ -100,23 +108,28 @@
                 android:id="@+id/zip"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:autofillHints=""
                 android:hint="@string/zip"
                 android:inputType="number"
                 android:maxLength="5"
-                android:text="@{viewModel.zip}"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="16dp"
+                android:text="@{viewModel.addressZip}"
                 app:layout_constraintEnd_toEndOf="@id/city"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/city"
+                app:layout_constraintStart_toEndOf="@id/city"
+                app:layout_constraintBottom_toBottomOf="parent"
                 motion:ignore="TouchTargetSizeCheck" />
 
             <!-- TODO: Add visual styling and label -->
-            <Button
-                android:id="@+id/button_search"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/find_my_representative"
-                app:layout_constraintTop_toBottomOf="@id/zip" />
+        <Button
+            android:id="@+id/button_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/find_my_representative"
+            app:layout_constraintTop_toBottomOf="@id/state"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
 
             <!-- TODO: Add visual styling and content -->
             <Button
@@ -124,7 +137,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/use_my_location"
-                app:layout_constraintTop_toBottomOf="@id/button_search" />
+                app:layout_constraintTop_toBottomOf="@id/button_search"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
 
             <!-- TODO: Add visual styling and content -->
             <TextView
@@ -132,6 +149,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/my_representatives"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/button_location" />
 
@@ -140,6 +160,9 @@
                 android:id="@+id/representatives"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -147,16 +170,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/representative_title" />
 
             <!-- TODO: Add visual styling and content -->
-            <TextView
-                android:id="@+id/list_placeholder"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:gravity="center"
-                android:textAlignment="center"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/representative_title"
-                motion:visibilityMode="ignore" />
+
 
 <!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
     </androidx.constraintlayout.motion.widget.MotionLayout>

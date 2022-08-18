@@ -12,11 +12,15 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
+import com.example.android.politicalpreparedness.PoliticalPreparednessApplication
 import com.example.android.politicalpreparedness.R
+import com.example.android.politicalpreparedness.Repository
+import com.example.android.politicalpreparedness.database.ElectionDatabase
 import com.example.android.politicalpreparedness.databinding.FragmentRepresentativeBinding
 import com.example.android.politicalpreparedness.network.ElectionsNetworkManager
 import com.example.android.politicalpreparedness.network.models.Address
@@ -30,11 +34,10 @@ class DetailFragment : Fragment() {
 
     companion object {
         //TODO: Add Constant for Location request
-        const val REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE=555
         const val REQUEST_FOREGROUND_PERMISSION_RESULT_CODE=556
     }
 
-    private val qosOrLater=Build.VERSION.SDK_INT>=Build.VERSION_CODES.Q
+    //private val qosOrLater=Build.VERSION.SDK_INT>=Build.VERSION_CODES.Q
     private lateinit var fusedLocationServices:FusedLocationProviderClient
 
     //TODO: Declare ViewModel
@@ -50,7 +53,8 @@ class DetailFragment : Fragment() {
         binding= DataBindingUtil.inflate(inflater, R.layout.fragment_representative,container,false)
 
 
-        val representativeViewModelFactory=RepresentativeViewModelFactory(requireActivity().applicationContext)
+        val repoAppRepoContainer=(requireActivity().application as PoliticalPreparednessApplication).appRepoContainer
+        val representativeViewModelFactory=RepresentativeViewModelFactory(repoAppRepoContainer.repository,this)
         representativeViewModel= ViewModelProvider(this,representativeViewModelFactory).get(
             RepresentativeViewModel::class.java
         )
@@ -70,6 +74,7 @@ class DetailFragment : Fragment() {
         //TODO: Establish button listeners for field and location search
         binding.buttonSearch.setOnClickListener {
             Timber.d("find my reps clicked")
+            checkNetwork()
             val address=checkAddressFieldNotEmpty()
             if (address!=null){
                 representativeViewModel.getRepresentatives(address)
@@ -82,33 +87,50 @@ class DetailFragment : Fragment() {
             checkLocationPermissions()
         }
 
-        representativeViewModel.representatives.observe(viewLifecycleOwner,{
+        binding.addressLine1.doOnTextChanged { _, _, _, _ ->
+           binding.addressLine1.error=null
+        }
+        binding.city.doOnTextChanged { _, _, _, _ ->
+            binding.city.error=null
+        }
+        binding.zip.doOnTextChanged { _, _, _, _ ->
+            binding.zip.error=null
+        }
+        representativeViewModel.representatives.observe(viewLifecycleOwner) {
             Timber.d("repres i fragment $it")
+            hideKeyboard()
             representativeListAdapter.submitList(it)
-        })
+            representativeViewModel.setListShowing(true)
+        }
 
-        representativeViewModel.networkException.observe(viewLifecycleOwner,{
-            Toast.makeText(requireContext(),it,Toast.LENGTH_LONG).show()
-        })
 
-        ElectionsNetworkManager.getInstance(requireActivity().applicationContext).connectedToNetwork.observe(
-            viewLifecycleOwner,{
-                isConnected->
-                if(!isConnected){
-                    Toast.makeText(requireContext(),"Not connected",Toast.LENGTH_LONG).show()
-                }
-            }
-        )
+        representativeViewModel.networkException.observe(this.viewLifecycleOwner) {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+        }
+
 
         return binding.root
     }
+
+    private fun checkNetwork(){
+        ElectionsNetworkManager.getInstance(requireActivity().applicationContext).connectedToNetwork.observe(
+            viewLifecycleOwner
+        ) { isConnected ->
+            if (!isConnected) {
+                Toast.makeText(requireContext(), "Not connected", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        super.onSaveInstanceState(outState)
+//        representativeViewModel.setMotionTransitionID(binding.motionLayout.currentState)
+//    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         //TODO: Handle location permission result to get location on permission granted
         if (grantResults.isEmpty()|| grantResults[0]==PackageManager.PERMISSION_DENIED||
-            (requestCode== REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE &&
-                    grantResults[1]==PackageManager.PERMISSION_DENIED)||
             (requestCode== REQUEST_FOREGROUND_PERMISSION_RESULT_CODE && grantResults[1]==
                     PackageManager.PERMISSION_DENIED)){
             Timber.d("Permission denied")
@@ -161,30 +183,13 @@ class DetailFragment : Fragment() {
                 PackageManager.PERMISSION_GRANTED==ContextCompat.checkSelfPermission(
                     requireContext(),Manifest.permission.ACCESS_FINE_LOCATION
                 ))
-        val backgroundPermissionEnabled=if(qosOrLater){
-            PackageManager.PERMISSION_GRANTED==ContextCompat.checkSelfPermission(
-                requireContext(),Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            )
-        }
-        else
-            true
-        Timber.d("f and b loc ${foregroundLocationEnabled && backgroundPermissionEnabled}")
-        return foregroundLocationEnabled && backgroundPermissionEnabled
+        Timber.d("f and b loc ${foregroundLocationEnabled}")
+        return foregroundLocationEnabled
     }
 
     private fun requestLocatonPermissions(){
-        if(isPermissionGranted())
-        {
-            return
-        }
         var permissionArray= arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-        val requestCode=when{
-            qosOrLater ->{
-                permissionArray+=Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE
-            }
-            else -> REQUEST_FOREGROUND_PERMISSION_RESULT_CODE
-        }
+        val requestCode=REQUEST_FOREGROUND_PERMISSION_RESULT_CODE
         requireActivity().requestPermissions(permissionArray,requestCode)
     }
 

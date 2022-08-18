@@ -10,7 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
+import com.example.android.politicalpreparedness.PoliticalPreparednessApplication
 import com.example.android.politicalpreparedness.R
+import com.example.android.politicalpreparedness.Repository
+import com.example.android.politicalpreparedness.database.ElectionDatabase
 import com.example.android.politicalpreparedness.databinding.FragmentElectionBinding
 import com.example.android.politicalpreparedness.election.adapter.ElectionListAdapter
 import com.example.android.politicalpreparedness.network.ElectionsNetworkManager
@@ -34,11 +37,12 @@ class ElectionsFragment: Fragment() {
         //TODO: Add binding values
         binding= DataBindingUtil.inflate(inflater, R.layout.fragment_election,container,false)
 
+        val repoAppRepoContainer=(requireActivity().application as PoliticalPreparednessApplication).appRepoContainer
         //TODO: Add ViewModel values and create ViewModel
-        val electionsViewModelFactory=ElectionsViewModelFactory(requireActivity().applicationContext)
+        val electionsViewModelFactory=ElectionsViewModelFactory(repoAppRepoContainer.repository)
         electionViewModel=ViewModelProvider(this,electionsViewModelFactory).get(ElectionsViewModel::class.java)
 
-        binding.viewModel=electionViewModel
+        //binding.viewModel=electionViewModel
 
         binding.apply {
             lifecycleOwner = this@ElectionsFragment
@@ -57,12 +61,12 @@ class ElectionsFragment: Fragment() {
 
             binding.upcomingElections.adapter=upcomingElectionListAdapter
 
-            electionViewModel.upcomingElections.observe(viewLifecycleOwner,{
-                    electionList-> upcomingElectionListAdapter.submitList(electionList)
-            })
+            electionViewModel.upcomingElections.observe(viewLifecycleOwner) { electionList ->
+                upcomingElectionListAdapter.submitList(electionList)
+            }
 
 
-            //TODO: Initiate recycler adapters
+        //TODO: Initiate recycler adapters
             val savedElectionListAdapter=
                 ElectionListAdapter(ElectionListAdapter.ElectionListener{election ->
                     //viewModel.startNavigatingToVoterInfo(election)
@@ -79,11 +83,11 @@ class ElectionsFragment: Fragment() {
 //        val date= Date(2025,7,6)
 //        val electionList= listOf<Election>(Election(2000,"test election",date,division))
 
-            electionViewModel.savedElections.observe(viewLifecycleOwner, { electionList ->
+            electionViewModel.savedElections.observe(viewLifecycleOwner) { electionList ->
                 savedElectionListAdapter.submitList(electionList)
-            })
+            }
 
-            //electionViewModel.loadElections()
+        //electionViewModel.loadElections()
         refreshElections()
 
         binding.refreshUpcomingElections.setOnRefreshListener {
@@ -96,14 +100,13 @@ class ElectionsFragment: Fragment() {
     //TODO: Refresh adapters when fragment loads
     private fun refreshElections(){
         val networkManager= ElectionsNetworkManager.getInstance(requireActivity().applicationContext)
-        networkManager.connectedToNetwork.observe(viewLifecycleOwner,{isNetWorkAvailable ->
-            if(isNetWorkAvailable){
+        networkManager.connectedToNetwork.observe(viewLifecycleOwner) { isNetWorkAvailable ->
+            if (isNetWorkAvailable) {
                 showUpcomingElections()
-            }
-            else{
+            } else {
                 showNotConnectedToNetwork()
             }
-        })
+        }
         electionViewModel.getSavedElections()
     }
 

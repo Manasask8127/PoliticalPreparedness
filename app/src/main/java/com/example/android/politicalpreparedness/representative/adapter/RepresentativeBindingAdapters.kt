@@ -12,7 +12,6 @@ import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
 import androidx.lifecycle.MutableLiveData
 import com.bumptech.glide.Glide
-import com.bumptech.glide.Glide.with
 import com.example.android.politicalpreparedness.R
 
 @BindingAdapter("profileImage")
@@ -21,14 +20,12 @@ fun fetchImage(view: ImageView, src: String?) {
         val uri = src.toUri().buildUpon().scheme("https").build()
         //TODO: Add Glide call to load image and circle crop - user ic_profile as a placeholder and for errors.
         val context=view.context
-        if(null!=uri){
             Glide.with(context)
                 .load(src)
                 .error(R.drawable.ic_profile)
                 .placeholder(R.drawable.ic_profile)
                 .centerCrop()
                 .into(view)
-        }
     }
 }
 
