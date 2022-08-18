@@ -122,10 +122,6 @@ class DetailFragment : Fragment() {
         }
     }
 
-//    override fun onSaveInstanceState(outState: Bundle) {
-//        super.onSaveInstanceState(outState)
-//        representativeViewModel.setMotionTransitionID(binding.motionLayout.currentState)
-//    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)

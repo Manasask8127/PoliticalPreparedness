@@ -67,13 +67,6 @@ class RepresentativeViewModel(private val repository:Repository,
             savedStateHandle.set(showList,value.value)
         }
 
-//    private var _motionTransition=MutableLiveData<Int>()
-//        set(value){
-//            field=value
-//            savedStateHandle.set("motion",value.value)
-//        }
-//    val motionTransition:LiveData<Int>
-//        get() = _motionTransition
 
     init {
         restoreAddress()
@@ -90,7 +83,6 @@ class RepresentativeViewModel(private val repository:Repository,
         addressState=savedStateHandle.getLiveData(state)
         addressZip=savedStateHandle.getLiveData(zip)
         _isListShowing=savedStateHandle.getLiveData(showList)
-       // _motionTransition=savedStateHandle.getLiveData("motion")
     }
 
 
@@ -156,8 +148,5 @@ class RepresentativeViewModel(private val repository:Repository,
         _isListShowing.postValue(boolean)
     }
 
-//    fun setMotionTransitionID(id:Int){
-//        _motionTransition.postValue(id)
-//    }
 
 }
