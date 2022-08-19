@@ -8,7 +8,7 @@ import com.example.android.politicalpreparedness.network.models.Election
 data class ElectionAndAdministrationBody(
     @Embedded val election: Election,
     @Relation(
-        parentColumn="id",
+        parentColumn = "id",
         entityColumn = "adminId"
     )
     val administrationBody: AdministrationBody

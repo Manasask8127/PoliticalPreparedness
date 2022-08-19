@@ -9,8 +9,8 @@ import java.util.*
 @Parcelize
 @Entity(tableName = "election_table")
 data class Election(
-        @PrimaryKey val id: Int,
-        @ColumnInfo(name = "name")val name: String,
-        @ColumnInfo(name = "electionDay")val electionDay: Date,
-        @Embedded(prefix = "division_") @Json(name="ocdDivisionId") val division: Division
-):Parcelable
+    @PrimaryKey val id: Int,
+    @ColumnInfo(name = "name") val name: String,
+    @ColumnInfo(name = "electionDay") val electionDay: Date,
+    @Embedded(prefix = "division_") @Json(name = "ocdDivisionId") val division: Division
+) : Parcelable

@@ -15,9 +15,8 @@ import com.example.android.politicalpreparedness.databinding.ViewholderRepresent
 import com.example.android.politicalpreparedness.network.models.Channel
 import com.example.android.politicalpreparedness.representative.model.Representative
 
-class RepresentativeListAdapter: ListAdapter<Representative,
-        RepresentativeViewHolder>(RepresentativeDiffCallback())
-{
+class RepresentativeListAdapter : ListAdapter<Representative,
+        RepresentativeViewHolder>(RepresentativeDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepresentativeViewHolder {
         return RepresentativeViewHolder.from(parent)
@@ -29,7 +28,7 @@ class RepresentativeListAdapter: ListAdapter<Representative,
     }
 }
 
-class RepresentativeViewHolder(val binding: ViewholderRepresentativeBinding):
+class RepresentativeViewHolder(val binding: ViewholderRepresentativeBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: Representative) {
@@ -49,20 +48,24 @@ class RepresentativeViewHolder(val binding: ViewholderRepresentativeBinding):
     }
 
     //TODO: Add companion object to inflate ViewHolder (from)
-    companion object{
-        fun from(parent: ViewGroup):RepresentativeViewHolder{
-            val layoutInflater=LayoutInflater.from(parent.context)
-            val binding=ViewholderRepresentativeBinding.inflate(layoutInflater,parent,false)
+    companion object {
+        fun from(parent: ViewGroup): RepresentativeViewHolder {
+            val layoutInflater = LayoutInflater.from(parent.context)
+            val binding = ViewholderRepresentativeBinding.inflate(layoutInflater, parent, false)
             return RepresentativeViewHolder(binding)
         }
     }
 
     private fun showSocialLinks(channels: List<Channel>) {
         val facebookUrl = getFacebookUrl(channels)
-        if (!facebookUrl.isNullOrBlank()) { enableLink(binding.facebookIcon, facebookUrl) }
+        if (!facebookUrl.isNullOrBlank()) {
+            enableLink(binding.facebookIcon, facebookUrl)
+        }
 
         val twitterUrl = getTwitterUrl(channels)
-        if (!twitterUrl.isNullOrBlank()) { enableLink(binding.twitterIcon, twitterUrl) }
+        if (!twitterUrl.isNullOrBlank()) {
+            enableLink(binding.twitterIcon, twitterUrl)
+        }
     }
 
     private fun showWWWLinks(urls: List<String>) {
@@ -71,14 +74,14 @@ class RepresentativeViewHolder(val binding: ViewholderRepresentativeBinding):
 
     private fun getFacebookUrl(channels: List<Channel>): String? {
         return channels.filter { channel -> channel.type == "Facebook" }
-                .map { channel -> "https://www.facebook.com/${channel.id}" }
-                .firstOrNull()
+            .map { channel -> "https://www.facebook.com/${channel.id}" }
+            .firstOrNull()
     }
 
     private fun getTwitterUrl(channels: List<Channel>): String? {
         return channels.filter { channel -> channel.type == "Twitter" }
-                .map { channel -> "https://www.twitter.com/${channel.id}" }
-                .firstOrNull()
+            .map { channel -> "https://www.twitter.com/${channel.id}" }
+            .firstOrNull()
     }
 
     private fun enableLink(view: ImageView, url: String) {
@@ -95,15 +98,14 @@ class RepresentativeViewHolder(val binding: ViewholderRepresentativeBinding):
 }
 
 //TODO: Create RepresentativeDiffCallback
-class RepresentativeDiffCallback:DiffUtil.ItemCallback<Representative>(){
+class RepresentativeDiffCallback : DiffUtil.ItemCallback<Representative>() {
     override fun areItemsTheSame(oldItem: Representative, newItem: Representative): Boolean {
-        return oldItem.office.name==newItem.office.name && oldItem.official.name== newItem.official.name
+        return oldItem.office.name == newItem.office.name && oldItem.official.name == newItem.official.name
     }
 
     override fun areContentsTheSame(oldItem: Representative, newItem: Representative): Boolean {
-        return oldItem==newItem
+        return oldItem == newItem
     }
 
 }
 
-//TODO: Create RepresentativeListener

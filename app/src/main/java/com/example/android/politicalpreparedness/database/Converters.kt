@@ -16,7 +16,7 @@ class Converters {
     }
 
     @TypeConverter
-    fun addressToString(address: Address?):String?{
+    fun addressToString(address: Address?): String? {
         return address?.let {
             address.line1.plus(",")
                 .plus(address.line2).plus(",")
@@ -27,14 +27,15 @@ class Converters {
     }
 
     @TypeConverter
-    fun stringToAddress(addressString:String?):Address?{
-        val addressArray=addressString?.split(",")
+    fun stringToAddress(addressString: String?): Address? {
+        val addressArray = addressString?.split(",")
         return addressArray?.let {
-            Address(addressArray[0],
-            addressArray[1],
-            addressArray[2],
-            addressArray[3],
-            addressArray[4]
+            Address(
+                addressArray[0],
+                addressArray[1],
+                addressArray[2],
+                addressArray[3],
+                addressArray[4]
             )
         }
     }

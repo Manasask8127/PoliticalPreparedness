@@ -21,7 +21,7 @@ import com.example.android.politicalpreparedness.network.models.Division
 import com.example.android.politicalpreparedness.network.models.Election
 import java.util.*
 
-class ElectionsFragment: Fragment() {
+class ElectionsFragment : Fragment() {
 
     //TODO: Declare ViewModel
     private lateinit var electionViewModel: ElectionsViewModel
@@ -29,77 +29,78 @@ class ElectionsFragment: Fragment() {
     //ViewBinding
     private lateinit var binding: FragmentElectionBinding
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
 
         //TODO: Add binding values
-        binding= DataBindingUtil.inflate(inflater, R.layout.fragment_election,container,false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_election, container, false)
 
-        val repoAppRepoContainer=(requireActivity().application as PoliticalPreparednessApplication).appRepoContainer
+        val repoAppRepoContainer =
+            (requireActivity().application as PoliticalPreparednessApplication).appRepoContainer
         //TODO: Add ViewModel values and create ViewModel
-        val electionsViewModelFactory=ElectionsViewModelFactory(repoAppRepoContainer.repository)
-        electionViewModel=ViewModelProvider(this,electionsViewModelFactory).get(ElectionsViewModel::class.java)
+        val electionsViewModelFactory = ElectionsViewModelFactory(repoAppRepoContainer.repository)
+        electionViewModel =
+            ViewModelProvider(this, electionsViewModelFactory).get(ElectionsViewModel::class.java)
 
         //binding.viewModel=electionViewModel
 
         binding.apply {
             lifecycleOwner = this@ElectionsFragment
-            viewModel=electionViewModel
+            viewModel = electionViewModel
         }
 
-            //TODO: Create ElectionViewHolder
-            val upcomingElectionListAdapter=ElectionListAdapter(ElectionListAdapter.ElectionListener{
-                    election ->
+        //TODO: Create ElectionViewHolder
+        val upcomingElectionListAdapter =
+            ElectionListAdapter(ElectionListAdapter.ElectionListener { election ->
                 findNavController().navigate(
                     ElectionsFragmentDirections.actionElectionsFragmentToVoterInfoFragment(
-                        election.id,election.division,false
+                        election.id, election.division, false
                     )
                 )
             })
 
-            binding.upcomingElections.adapter=upcomingElectionListAdapter
+        binding.upcomingElections.adapter = upcomingElectionListAdapter
 
-            electionViewModel.upcomingElections.observe(viewLifecycleOwner) { electionList ->
-                upcomingElectionListAdapter.submitList(electionList)
-            }
+        electionViewModel.upcomingElections.observe(viewLifecycleOwner) { electionList ->
+            upcomingElectionListAdapter.submitList(electionList)
+        }
 
 
         //TODO: Initiate recycler adapters
-            val savedElectionListAdapter=
-                ElectionListAdapter(ElectionListAdapter.ElectionListener{election ->
-                    //viewModel.startNavigatingToVoterInfo(election)
-                    findNavController().navigate(
-                        ElectionsFragmentDirections.actionElectionsFragmentToVoterInfoFragment(
-                            election.id,election.division,true
-                        )
+        val savedElectionListAdapter =
+            ElectionListAdapter(ElectionListAdapter.ElectionListener { election ->
+                //viewModel.startNavigatingToVoterInfo(election)
+                findNavController().navigate(
+                    ElectionsFragmentDirections.actionElectionsFragmentToVoterInfoFragment(
+                        election.id, election.division, true
                     )
-                })
+                )
+            })
 
-            //TODO: Populate recycler adapters
-            binding.savedElections.adapter=savedElectionListAdapter
-//        val division=Division("ocd-division/country:us","USA","la")
-//        val date= Date(2025,7,6)
-//        val electionList= listOf<Election>(Election(2000,"test election",date,division))
+        //TODO: Populate recycler adapters
+        binding.savedElections.adapter = savedElectionListAdapter
 
-            electionViewModel.savedElections.observe(viewLifecycleOwner) { electionList ->
-                savedElectionListAdapter.submitList(electionList)
-            }
+        electionViewModel.savedElections.observe(viewLifecycleOwner) { electionList ->
+            savedElectionListAdapter.submitList(electionList)
+        }
 
-        //electionViewModel.loadElections()
         refreshElections()
 
         binding.refreshUpcomingElections.setOnRefreshListener {
             refreshElections()
         }
-            return binding.root
-        }
+        return binding.root
+    }
 
 
     //TODO: Refresh adapters when fragment loads
-    private fun refreshElections(){
-        val networkManager= ElectionsNetworkManager.getInstance(requireActivity().applicationContext)
+    private fun refreshElections() {
+        val networkManager =
+            ElectionsNetworkManager.getInstance(requireActivity().applicationContext)
         networkManager.connectedToNetwork.observe(viewLifecycleOwner) { isNetWorkAvailable ->
             if (isNetWorkAvailable) {
                 showUpcomingElections()
@@ -111,17 +112,17 @@ class ElectionsFragment: Fragment() {
     }
 
     private fun showNotConnectedToNetwork() {
-        binding.upcomingElections.visibility=View.GONE
-        binding.error.visibility=View.VISIBLE
+        binding.upcomingElections.visibility = View.GONE
+        binding.error.visibility = View.VISIBLE
         binding.error.setImageResource(R.drawable.ic_no_network)
-        binding.refreshUpcomingElections.isRefreshing=false
+        binding.refreshUpcomingElections.isRefreshing = false
     }
 
-    private fun showUpcomingElections(){
-        binding.error.visibility=View.GONE
-        binding.upcomingElections.visibility=View.VISIBLE
+    private fun showUpcomingElections() {
+        binding.error.visibility = View.GONE
+        binding.upcomingElections.visibility = View.VISIBLE
         electionViewModel.refreshElections()
-        binding.refreshUpcomingElections.isRefreshing=false
+        binding.refreshUpcomingElections.isRefreshing = false
     }
 
 

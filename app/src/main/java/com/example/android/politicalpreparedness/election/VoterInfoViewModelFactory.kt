@@ -7,9 +7,9 @@ import com.example.android.politicalpreparedness.Repository
 import com.example.android.politicalpreparedness.network.models.Election
 
 //TODO: Create Factory to generate VoterInfoViewModel with provided election datasource
-class VoterInfoViewModelFactory(private val repository: Repository): ViewModelProvider.Factory {
+class VoterInfoViewModelFactory(private val repository: Repository) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if(modelClass.isAssignableFrom(VoterInfoViewModel::class.java)){
+        if (modelClass.isAssignableFrom(VoterInfoViewModel::class.java)) {
             return VoterInfoViewModel(repository) as T
         }
         throw ClassNotFoundException("unknown view model")

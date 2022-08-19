@@ -9,6 +9,6 @@ class PoliticalPreparednessApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
-        appRepoContainer=AppRepoContainer(applicationContext)
+        appRepoContainer = AppRepoContainer(applicationContext)
     }
 }

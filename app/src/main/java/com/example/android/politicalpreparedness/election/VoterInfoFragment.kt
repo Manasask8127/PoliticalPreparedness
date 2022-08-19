@@ -19,33 +19,37 @@ class VoterInfoFragment : Fragment() {
     private lateinit var binding: FragmentVoterInfoBinding
 
     //viewmodel declaration
-    private lateinit var voterInfoViewModel:VoterInfoViewModel
+    private lateinit var voterInfoViewModel: VoterInfoViewModel
 
     //argumets
-    private val args:VoterInfoFragmentArgs by navArgs()
+    private val args: VoterInfoFragmentArgs by navArgs()
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
         //TODO: Add binding values
-        binding=FragmentVoterInfoBinding.inflate(inflater)
+        binding = FragmentVoterInfoBinding.inflate(inflater)
 
-        val repoAppRepoContainer=(requireActivity().application as PoliticalPreparednessApplication).appRepoContainer
+        val repoAppRepoContainer =
+            (requireActivity().application as PoliticalPreparednessApplication).appRepoContainer
 
         //TODO: Add ViewModel values and create ViewModel
-        val voterInfoViewModelFactory=VoterInfoViewModelFactory(repoAppRepoContainer.repository)
-        voterInfoViewModel=ViewModelProvider(this,voterInfoViewModelFactory).get(VoterInfoViewModel::class.java)
+        val voterInfoViewModelFactory = VoterInfoViewModelFactory(repoAppRepoContainer.repository)
+        voterInfoViewModel =
+            ViewModelProvider(this, voterInfoViewModelFactory).get(VoterInfoViewModel::class.java)
 
 
         binding.apply {
-            lifecycleOwner=this@VoterInfoFragment
+            lifecycleOwner = this@VoterInfoFragment
             viewModel = voterInfoViewModel
         }
 
-        val address=voterInfoViewModel.getAddress(args.argDivision)
+        val address = voterInfoViewModel.getAddress(args.argDivision)
 
-        voterInfoViewModel.loadElectionInfo(address,args.argElectionID,args.argLoadFromDB)
+        voterInfoViewModel.loadElectionInfo(address, args.argElectionID, args.argLoadFromDB)
 
         voterInfoViewModel.election.observe(requireActivity()) {
             binding.election = it
@@ -54,20 +58,16 @@ class VoterInfoFragment : Fragment() {
         voterInfoViewModel.administrationBody.observe(viewLifecycleOwner) {
             binding.administrationBody = it
         }
-        //TODO: Populate voter info -- hide views without provided data.
-        /**
-        Hint: You will need to ensure proper data is provided from previous fragment.
-        */
 
 
         //TODO: Handle loading of URLs
         binding.stateBallot.setOnClickListener {
-            val adminBody=voterInfoViewModel.administrationBody.value
+            val adminBody = voterInfoViewModel.administrationBody.value
             loadElectionInfoUrl(adminBody?.ballotInfoUrl)
         }
 
         binding.stateLocations.setOnClickListener {
-            val adminBody=voterInfoViewModel.administrationBody.value
+            val adminBody = voterInfoViewModel.administrationBody.value
             loadElectionInfoUrl(adminBody?.electionInfoUrl)
         }
 
@@ -77,7 +77,7 @@ class VoterInfoFragment : Fragment() {
             binding.followElectionButton.text = it
         }
 
-        binding.followElectionButton.setOnClickListener{
+        binding.followElectionButton.setOnClickListener {
             voterInfoViewModel.followOrUnfollowElection(args.argElectionID)
         }
 
@@ -85,9 +85,9 @@ class VoterInfoFragment : Fragment() {
     }
 
     //TODO: Create method to load URL intents
-    private fun loadElectionInfoUrl(url:String?){
+    private fun loadElectionInfoUrl(url: String?) {
         Intent(Intent.ACTION_VIEW).run {
-            data= Uri.parse(url)
+            data = Uri.parse(url)
             startActivity(this)
         }
     }

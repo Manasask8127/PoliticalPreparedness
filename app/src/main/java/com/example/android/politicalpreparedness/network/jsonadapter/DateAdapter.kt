@@ -6,13 +6,15 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class DateAdapter {
-    private val simpleDateFormat=SimpleDateFormat("yyyy-MM-dd")
+    private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
+
     @FromJson
-    fun electionDayFromJson(electionDay:String): Date {
+    fun electionDayFromJson(electionDay: String): Date {
         return simpleDateFormat.parse(electionDay)
     }
+
     @ToJson
-    fun electionDayToJson(electionDay:Date): String {
+    fun electionDayToJson(electionDay: Date): String {
         return simpleDateFormat.format(electionDay)
     }
 

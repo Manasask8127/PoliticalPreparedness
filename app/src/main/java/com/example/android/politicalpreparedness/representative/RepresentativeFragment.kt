@@ -34,49 +34,54 @@ class DetailFragment : Fragment() {
 
     companion object {
         //TODO: Add Constant for Location request
-        const val REQUEST_FOREGROUND_PERMISSION_RESULT_CODE=556
+        const val REQUEST_FOREGROUND_PERMISSION_RESULT_CODE = 556
     }
 
     //private val qosOrLater=Build.VERSION.SDK_INT>=Build.VERSION_CODES.Q
-    private lateinit var fusedLocationServices:FusedLocationProviderClient
+    private lateinit var fusedLocationServices: FusedLocationProviderClient
 
     //TODO: Declare ViewModel
     private lateinit var representativeViewModel: RepresentativeViewModel
 
-    private lateinit var binding:FragmentRepresentativeBinding
+    private lateinit var binding: FragmentRepresentativeBinding
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
         //TODO: Establish bindings
-        binding= DataBindingUtil.inflate(inflater, R.layout.fragment_representative,container,false)
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_representative, container, false)
 
 
-        val repoAppRepoContainer=(requireActivity().application as PoliticalPreparednessApplication).appRepoContainer
-        val representativeViewModelFactory=RepresentativeViewModelFactory(repoAppRepoContainer.repository,this)
-        representativeViewModel= ViewModelProvider(this,representativeViewModelFactory).get(
+        val repoAppRepoContainer =
+            (requireActivity().application as PoliticalPreparednessApplication).appRepoContainer
+        val representativeViewModelFactory =
+            RepresentativeViewModelFactory(repoAppRepoContainer.repository, this)
+        representativeViewModel = ViewModelProvider(this, representativeViewModelFactory).get(
             RepresentativeViewModel::class.java
         )
-        fusedLocationServices=LocationServices.getFusedLocationProviderClient(requireActivity())
+        fusedLocationServices = LocationServices.getFusedLocationProviderClient(requireActivity())
 
         binding.apply {
-        lifecycleOwner=this@DetailFragment
-            viewModel=representativeViewModel
+            lifecycleOwner = this@DetailFragment
+            viewModel = representativeViewModel
         }
 
         //TODO: Define and assign Representative adapter
-        val representativeListAdapter=RepresentativeListAdapter()
+        val representativeListAdapter = RepresentativeListAdapter()
 
         //TODO: Populate Representative adapter
-        binding.representatives.adapter=representativeListAdapter
+        binding.representatives.adapter = representativeListAdapter
 
         //TODO: Establish button listeners for field and location search
         binding.buttonSearch.setOnClickListener {
             Timber.d("find my reps clicked")
             checkNetwork()
-            val address=checkAddressFieldNotEmpty()
-            if (address!=null){
+            val address = checkAddressFieldNotEmpty()
+            if (address != null) {
                 representativeViewModel.getRepresentatives(address)
                 hideKeyboard()
             }
@@ -88,13 +93,13 @@ class DetailFragment : Fragment() {
         }
 
         binding.addressLine1.doOnTextChanged { _, _, _, _ ->
-           binding.addressLine1.error=null
+            binding.addressLine1.error = null
         }
         binding.city.doOnTextChanged { _, _, _, _ ->
-            binding.city.error=null
+            binding.city.error = null
         }
         binding.zip.doOnTextChanged { _, _, _, _ ->
-            binding.zip.error=null
+            binding.zip.error = null
         }
         representativeViewModel.representatives.observe(viewLifecycleOwner) {
             Timber.d("repres i fragment $it")
@@ -112,7 +117,7 @@ class DetailFragment : Fragment() {
         return binding.root
     }
 
-    private fun checkNetwork(){
+    private fun checkNetwork() {
         ElectionsNetworkManager.getInstance(requireActivity().applicationContext).connectedToNetwork.observe(
             viewLifecycleOwner
         ) { isConnected ->
@@ -123,41 +128,49 @@ class DetailFragment : Fragment() {
     }
 
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         //TODO: Handle location permission result to get location on permission granted
-        if (grantResults.isEmpty()|| grantResults[0]==PackageManager.PERMISSION_DENIED||
-            (requestCode== REQUEST_FOREGROUND_PERMISSION_RESULT_CODE && grantResults[1]==
-                    PackageManager.PERMISSION_DENIED)){
+        if (grantResults.isEmpty() || grantResults[0] == PackageManager.PERMISSION_DENIED ||
+            (requestCode == REQUEST_FOREGROUND_PERMISSION_RESULT_CODE && grantResults[1] ==
+                    PackageManager.PERMISSION_DENIED)
+        ) {
             Timber.d("Permission denied")
-            Toast.makeText(requireContext(),"Please grant permission to access location",Toast.LENGTH_SHORT).show()
-        }
-        else{
+            Toast.makeText(
+                requireContext(),
+                "Please grant permission to access location",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
             Timber.d("Permission granted")
             getLocation()
         }
 
     }
 
-    private fun checkAddressFieldNotEmpty():String?{
-        var address:Address?=null
-        when{
-            binding.addressLine1.text.isEmpty()->{
-                binding.addressLine1.error="Please enter address line"
+    private fun checkAddressFieldNotEmpty(): String? {
+        var address: Address? = null
+        when {
+            binding.addressLine1.text.isEmpty() -> {
+                binding.addressLine1.error = "Please enter address line"
             }
-            binding.city.text.isEmpty()->{
-                binding.city.error="Please enter city"
+            binding.city.text.isEmpty() -> {
+                binding.city.error = "Please enter city"
             }
-            binding.zip.text.isEmpty()->{
-                binding.zip.error="Please enter zip code"
+            binding.zip.text.isEmpty() -> {
+                binding.zip.error = "Please enter zip code"
             }
-            else->{
-                val line1=binding.addressLine1.text.toString().trim()
-                    val line2=binding.addressLine2.text.toString().trim()
-                    val city=binding.city.text.toString().trim()
-                    val state=binding.state.selectedItem.toString().trim()
-                    val zip=binding.zip.text.toString().trim()
-                address= Address(line1,line2,city, state, zip)
+            else -> {
+                val line1 = binding.addressLine1.text.toString().trim()
+                val line2 = binding.addressLine2.text.toString().trim()
+                val city = binding.city.text.toString().trim()
+                val state = binding.state.selectedItem.toString().trim()
+                val zip = binding.zip.text.toString().trim()
+                address = Address(line1, line2, city, state, zip)
                 Timber.d("address $address")
             }
         }
@@ -173,29 +186,29 @@ class DetailFragment : Fragment() {
         }
     }
 
-    private fun isPermissionGranted() : Boolean {
+    private fun isPermissionGranted(): Boolean {
         //TODO: Check if permission is already granted and return (true = granted, false = denied/other)
-        val foregroundLocationEnabled=(
-                PackageManager.PERMISSION_GRANTED==ContextCompat.checkSelfPermission(
-                    requireContext(),Manifest.permission.ACCESS_FINE_LOCATION
+        val foregroundLocationEnabled = (
+                PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(
+                    requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
                 ))
         Timber.d("f and b loc ${foregroundLocationEnabled}")
         return foregroundLocationEnabled
     }
 
-    private fun requestLocatonPermissions(){
-        var permissionArray= arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-        val requestCode=REQUEST_FOREGROUND_PERMISSION_RESULT_CODE
-        requireActivity().requestPermissions(permissionArray,requestCode)
+    private fun requestLocatonPermissions() {
+        var permissionArray = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+        val requestCode = REQUEST_FOREGROUND_PERMISSION_RESULT_CODE
+        requireActivity().requestPermissions(permissionArray, requestCode)
     }
 
     @SuppressLint("MissingPermission")
     private fun getLocation() {
         //TODO: Get location from LocationServices
         //TODO: The geoCodeLocation method is a helper function to change the lat/long location to a human readable street address
-        fusedLocationServices.lastLocation.addOnSuccessListener(requireActivity()){location->
-            if (location!=null){
-                val address=geoCodeLocation(location)
+        fusedLocationServices.lastLocation.addOnSuccessListener(requireActivity()) { location ->
+            if (location != null) {
+                val address = geoCodeLocation(location)
                 representativeViewModel.setAddress(address)
                 Timber.d("address is ${address}")
             }
@@ -205,10 +218,16 @@ class DetailFragment : Fragment() {
     private fun geoCodeLocation(location: Location): Address {
         val geocoder = Geocoder(context, Locale.getDefault())
         return geocoder.getFromLocation(location.latitude, location.longitude, 1)
-                .map { address ->
-                    Address(address.thoroughfare, address.subThoroughfare, address.locality, address.adminArea, address.postalCode)
-                }
-                .first()
+            .map { address ->
+                Address(
+                    address.thoroughfare,
+                    address.subThoroughfare,
+                    address.locality,
+                    address.adminArea,
+                    address.postalCode
+                )
+            }
+            .first()
     }
 
     private fun hideKeyboard() {

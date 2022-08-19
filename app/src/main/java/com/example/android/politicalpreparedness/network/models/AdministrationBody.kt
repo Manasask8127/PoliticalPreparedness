@@ -7,14 +7,14 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 @Entity(tableName = "administration_body")
-data class AdministrationBody (
-        val name: String? = null,
-        val electionInfoUrl: String? = null,
-        val votingLocationFinderUrl: String? = null,
-        val ballotInfoUrl: String? = null,
-        val correspondenceAddress: Address? = null
-){
-       // @Json(name="adminId")
-        @PrimaryKey(autoGenerate = true)
-        var adminId:Int=0
+data class AdministrationBody(
+    val name: String? = null,
+    val electionInfoUrl: String? = null,
+    val votingLocationFinderUrl: String? = null,
+    val ballotInfoUrl: String? = null,
+    val correspondenceAddress: Address? = null
+) {
+    // @Json(name="adminId")
+    @PrimaryKey(autoGenerate = true)
+    var adminId: Int = 0
 }
