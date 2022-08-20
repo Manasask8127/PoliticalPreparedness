@@ -224,7 +224,7 @@ class DetailFragment : Fragment() {
                     address.subThoroughfare,
                     address.locality,
                     address.adminArea,
-                    address.postalCode
+                    address?.postalCode.toString()
                 )
             }
             .first()
