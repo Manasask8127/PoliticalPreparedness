@@ -47,7 +47,7 @@
             android:layout_marginEnd="16dp"
             android:hint="@string/address_line_1"
             android:inputType="textPostalAddress"
-            android:text="@{viewModel.addressLine1}"
+            android:text="@={viewModel.addressLine1}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/search_title" />
 
@@ -63,7 +63,7 @@
             android:autofillHints=""
             android:hint="@string/address_line_2"
             android:inputType="textPostalAddress"
-            android:text="@{viewModel.addressLine2}"
+            android:text="@={viewModel.addressLine2}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/address_line_1" />
@@ -79,7 +79,7 @@
             android:autofillHints=""
             android:hint="@string/city"
             android:inputType="textPostalAddress"
-            android:text="@{viewModel.addressCity}"
+            android:text="@={viewModel.addressCity}"
             app:layout_constraintEnd_toStartOf="@id/state"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/address_line_2"
@@ -100,7 +100,7 @@
             app:layout_constraintEnd_toEndOf="@id/city"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/city"
-            app:stateValue="@{viewModel.addressState}" />
+            app:stateValue="@={viewModel.addressState}" />
 
         <!-- TODO: Add data binding value -->
         <!-- TODO: Add visual styling and content -->
@@ -113,7 +113,7 @@
             android:hint="@string/zip"
             android:inputType="number"
             android:maxLength="5"
-            android:text="@{viewModel.addressZip}"
+            android:text="@={viewModel.addressZip}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/city"
             app:layout_constraintStart_toEndOf="@id/city"
