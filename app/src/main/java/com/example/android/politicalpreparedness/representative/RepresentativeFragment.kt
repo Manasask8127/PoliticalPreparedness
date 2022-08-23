@@ -108,13 +108,36 @@ class DetailFragment : Fragment() {
             representativeViewModel.setListShowing(true)
         }
 
+//        representativeViewModel.motionTransition.observe(viewLifecycleOwner){ id->
+//            Timber.d("id is $id")
+//            if(id!=null){
+//                binding.motionLayout.transitionToState(id)
+//            }
+////            else
+////                binding.motionLayout.transitionToState(0)
+//        }
 
         representativeViewModel.networkException.observe(this.viewLifecycleOwner) {
             Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
         }
 
+        if(savedInstanceState?.getInt("motionLayout") != null) {
+            binding.motionLayout
+                .transitionToState(savedInstanceState
+                    .getInt("motionLayout"))
+        }
+
 
         return binding.root
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("motionLayout", binding.motionLayout
+            .currentState)
+//        super.onSaveInstanceState(outState)
+//        if(representativeViewModel.representatives.value!=null)
+//            representativeViewModel.setMotionTransitionStateId(binding.motionLayout.currentState)
     }
 
     private fun checkNetwork() {

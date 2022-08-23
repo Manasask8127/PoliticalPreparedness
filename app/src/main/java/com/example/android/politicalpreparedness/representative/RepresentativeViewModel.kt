@@ -69,6 +69,14 @@ class RepresentativeViewModel(
             savedStateHandle.set(showList, value.value)
         }
 
+//        private var _motionTransition=MutableLiveData<Int>()
+//        set(value){
+//            field=value
+//            savedStateHandle.set("motion",value.value)
+//        }
+//    val motionTransition:LiveData<Int>
+//        get() = _motionTransition
+
 
     init {
         restoreAddress()
@@ -85,6 +93,7 @@ class RepresentativeViewModel(
         addressState = savedStateHandle.getLiveData(state)
         addressZip = savedStateHandle.getLiveData(zip)
         _isListShowing = savedStateHandle.getLiveData(showList)
+        //_motionTransition=savedStateHandle.getLiveData("motion")
     }
 
 
@@ -150,5 +159,8 @@ class RepresentativeViewModel(
         _isListShowing.postValue(boolean)
     }
 
+//    fun setMotionTransitionStateId(id:Int){
+//        _motionTransition.postValue(id)
+//    }
 
 }
