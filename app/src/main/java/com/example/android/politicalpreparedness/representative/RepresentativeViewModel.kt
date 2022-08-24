@@ -159,8 +159,9 @@ class RepresentativeViewModel(
         _isListShowing.postValue(boolean)
     }
 
-//    fun setMotionTransitionStateId(id:Int){
-//        _motionTransition.postValue(id)
-//    }
+    fun setRepresentativeList(representativeList:List<Representative>?){
+        if(representativeList!=null)
+        _representatives.value=representativeList!!
+    }
 
 }

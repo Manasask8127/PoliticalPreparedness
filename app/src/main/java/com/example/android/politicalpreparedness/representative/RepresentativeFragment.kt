@@ -8,6 +8,7 @@ import android.location.Geocoder
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -25,9 +26,11 @@ import com.example.android.politicalpreparedness.databinding.FragmentRepresentat
 import com.example.android.politicalpreparedness.network.ElectionsNetworkManager
 import com.example.android.politicalpreparedness.network.models.Address
 import com.example.android.politicalpreparedness.representative.adapter.RepresentativeListAdapter
+import com.example.android.politicalpreparedness.representative.model.Representative
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import timber.log.Timber
+import java.util.ArrayList
 import java.util.Locale
 
 class DetailFragment : Fragment() {
@@ -108,19 +111,13 @@ class DetailFragment : Fragment() {
             representativeViewModel.setListShowing(true)
         }
 
-//        representativeViewModel.motionTransition.observe(viewLifecycleOwner){ id->
-//            Timber.d("id is $id")
-//            if(id!=null){
-//                binding.motionLayout.transitionToState(id)
-//            }
-////            else
-////                binding.motionLayout.transitionToState(0)
-//        }
+
 
         representativeViewModel.networkException.observe(this.viewLifecycleOwner) {
             Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
         }
 
+        representativeViewModel.setRepresentativeList(savedInstanceState?.getParcelableArrayList<Representative?>("representativesList")?.toList() as List<Representative>?)
         if(savedInstanceState?.getInt("motionLayout") != null) {
             binding.motionLayout
                 .transitionToState(savedInstanceState
@@ -133,8 +130,10 @@ class DetailFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        //val repList = representativeViewModel.representatives.value
         outState.putInt("motionLayout", binding.motionLayout
             .currentState)
+        outState.putParcelableArrayList("representativesList", representativeViewModel.representatives.value as ArrayList<Representative>)
 //        super.onSaveInstanceState(outState)
 //        if(representativeViewModel.representatives.value!=null)
 //            representativeViewModel.setMotionTransitionStateId(binding.motionLayout.currentState)
